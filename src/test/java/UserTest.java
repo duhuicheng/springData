@@ -93,7 +93,7 @@ public class UserTest {
     @Test
     public void JPASpecificationExecutorTest(){
         /**
-         * Specification用于封装查询条件
+         * Specification用于封装查询条件d
          */
         Specification<User> spc = new Specification<User>() {
             //Predicate封装单个查询条件
@@ -109,11 +109,27 @@ public class UserTest {
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> list = new ArrayList();
                 list.add(criteriaBuilder.equal(root.get("address"),"广州"));
-                list.add(criteriaBuilder.equal(root.get("age"),20));
+                list.add(criteriaBuilder.equal(root.get("age"),30));
                 Predicate[] arr = new Predicate[list.size()];
-                return criteriaBuilder.and(list.toArray(arr));
+                return criteriaBuilder.or(list.toArray(arr));
             }
         };
+        List<User> list = userRepositoryJPASpecificationExecutor.findAll(spc);
+        for (User user:list){
+            System.out.println(user);
+        }
+    }
+
+
+    @Test
+    public void test3(){
+        Specification<User> spc = new Specification() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder cb) {
+                return cb.or(cb.equal(root.get("address"),"广州"), cb.equal(root.get("age"), 30));
+            }
+        };
+
         List<User> list = userRepositoryJPASpecificationExecutor.findAll(spc);
         for (User user:list){
             System.out.println(user);
